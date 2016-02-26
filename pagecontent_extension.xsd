@@ -26,7 +26,7 @@
 	</complexType>
 	<complexType name="PageType">
 		<sequence>
-			<element name="Property" type="pc:PropertyType" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="Property" type="pc:PropertyType" minOccurs="0"/>
 			<element name="Tag" type="pc:TagType" minOccurs="0" maxOccurs="unbounded"/>
 			<element name="Link" type="pc:LinkType" minOccurs="0" maxOccurs="unbounded"/>
 			
@@ -201,7 +201,7 @@ Range: -179.999,180</documentation>
 	</complexType>
 	<complexType name="TextLineType">
 		<sequence>
-			<element name="Property" type="pc:PropertyType" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="Property" type="pc:PropertyType" minOccurs="0"/>
 			<element name="Tag" type="pc:TagType" minOccurs="0" maxOccurs="unbounded"/>
 			<element name="Link" type="pc:LinkType" minOccurs="0" maxOccurs="unbounded"/>
 			<element name="Coords" type="pc:CoordsType" minOccurs="0"/>
@@ -245,7 +245,7 @@ Range: -179.999,180</documentation>
 	</complexType>
 	<complexType name="WordType">
 		<sequence>
-			<element name="Property" type="pc:PropertyType" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="Property" type="pc:PropertyType" minOccurs="0"/>
 			<element name="Tag" type="pc:TagType" minOccurs="0" maxOccurs="unbounded"/>
 			<element name="Link" type="pc:LinkType" minOccurs="0" maxOccurs="unbounded"/>
 			<element name="Coords" type="pc:CoordsType"/>
@@ -281,7 +281,7 @@ Range: -179.999,180</documentation>
 	</complexType>
 	<complexType name="GlyphType">
 		<sequence>
-			<element name="Property" type="pc:PropertyType" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="Property" type="pc:PropertyType" minOccurs="0"/>
 			<element name="Tag" type="pc:TagType" minOccurs="0" maxOccurs="unbounded"/>
 			<element name="Link" type="pc:LinkType" minOccurs="0" maxOccurs="unbounded"/>
 			<element name="Coords" type="pc:CoordsType"/>
@@ -1334,7 +1334,7 @@ It does not contain pagenumber (if not part of running title), marginals, signat
 
     <complexType name="RegionType" abstract="true">
     	<sequence>
-    		<element name="Property" type="pc:PropertyType" minOccurs="0" maxOccurs="unbounded"/>
+    		<element name="Property" type="pc:PropertyType" minOccurs="0"/>
     		<element name="Tag" type="pc:TagType" minOccurs="0" maxOccurs="unbounded"/>
     		<element name="Link" type="pc:LinkType" minOccurs="0" maxOccurs="unbounded"/>
     		<element name="Coords" type="pc:CoordsType"/>
@@ -1382,44 +1382,28 @@ It does not contain pagenumber (if not part of running title), marginals, signat
     </simpleType>
 
 	<!-- Newly defined types: -->
-
+	<!-- these both next types are nearly copied from java.util.Properties--> 
+	<complexType name="EntryType">
+		<simpleContent>
+			<extension base="string">
+				<attribute name="key" use="required" type="string">
+			    		<annotation>
+    						<documentation>name of key has nearly no restrictions, like the key defined in java.util.Properties</documentation>
+    					</annotation>
+				</attribute>
+			</extension>
+		</simpleContent>
+	</complexType>
 	<complexType name="PropertyType">
 		<annotation>
 			<documentation>
-				an attribute is a simple key/value pair storing information about the element its in
-				attributes inherited to their child element and can be ovveridden there 
-				the inheritance hierarchy is: Page -> Region -> TextLine -> Word -> Glyph
+				Properties are inherited to their child elements and can be overwritten by the children.
+				A typical hierarchy is: Page -> Region -> TextLine -> Word -> Glyph
 			</documentation>
 		</annotation>
-		
-		<attribute name="key"  type="pc:PropertyNameType" use="required">
-			<annotation>
-				<documentation>
-					key of the property - this could pre specified keys like
-					"lang", "layout", "year_from", "year_to", "style", "weight"
-					or meta data from the automatic process
-					"editor", "editordate"
-					or user defined properties
-					"numbering"
-				</documentation>
-			</annotation>
-		</attribute>
-		
-		<attribute name="value"  type="string">
-			<annotation>
-				<documentation>
-					value to the corresponding key:
-					for lang: "de", "us", according ISO 639.2 
-					for year_(from|to): number
-					for style: italic, normal
-					for weight: bold, normal
-					for layout: float, table, ...
-					for numbering: 1,2,...
-					for editor: "user name", "htr_process"
-					...
-				</documentation>
-			</annotation>
-		</attribute>   	
+		<sequence>
+			<element name="entry" type="EntryType" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
 	</complexType>
 	
 	<simpleType name="PropertyNameType">
@@ -1444,6 +1428,8 @@ It does not contain pagenumber (if not part of running title), marginals, signat
 							properties of the tag
 						</documentation> 
 					</annotation>
+					<!-- a TagTyp can have entries (inherited by PropertyType) and PropertyTypes.
+					Is that, what you want?--> 
 					<element name="Property" type="pc:PropertyType"></element>
 				</sequence>
 				
